@@ -13,6 +13,3 @@ RUN conda env create -f environment.yaml
 
 # Copy app files
 COPY . .
-
-# Expose the port
-EXPOSE 8000
