@@ -4,4 +4,4 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: bash -c "source activate midas-py310 && gunicorn -w 2 -b 0.0.0.0:{$PORT} outscript:app"
+    command: bash -c "source activate midas-py310 && gunicorn -w 2 -b 0.0.0.0:505 outscript:app"
