@@ -1,8 +1,8 @@
+import numpy as np
 import os
 #F67E14 is the bound
 import subprocess
 import cv2
-import numpy as np
 from flask import Flask, request, jsonify
 from io import BytesIO
 from PIL import Image
