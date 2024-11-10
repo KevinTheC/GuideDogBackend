@@ -1,6 +1,6 @@
 build:
   docker:
-    web: Dockerfile  # Points to the Dockerfile
+    web: Dockerfile 
 
 run:
   web: bash -c "source activate midas-py310 && python -m flask run --host=0.0.0.0 --port=$PORT"
