@@ -15,4 +15,4 @@ RUN conda env create -f environment.yaml
 COPY . .
 
 # Expose the port
-EXPOSE 443
+EXPOSE 8000

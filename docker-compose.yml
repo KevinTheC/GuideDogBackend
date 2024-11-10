@@ -4,6 +4,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: bash -c "conda activate midas-py310 && gunicorn -w 2 -b 0.0.0.0:443 outscript:app"
+    command: bash -c "source activate midas-py310 && gunicorn -w 2 -b 0.0.0.0:8000 outscript:app"
     ports:
-      - "443:443"
+      - "8000:8000"
