@@ -1,29 +1,29 @@
-# enables cuda support in docker
-FROM nvidia/cuda:10.2-cudnn7-runtime-ubuntu18.04
+#CUSTOM DOCKER FOR KEVIN $$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# Use an official Conda image
+FROM continuumio/miniconda3
 
-# install python 3.6, pip and requirements for opencv-python 
-# (see https://github.com/NVIDIA/nvidia-docker/issues/864)
-RUN apt-get update && apt-get -y install \
-    python3 \
-    python3-pip \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+# Set up working directory
+WORKDIR /app
 
-# install python dependencies
-RUN pip3 install --upgrade pip
-RUN pip3 install torch~=1.8 torchvision opencv-python-headless~=3.4 timm
+# Create a base conda environment with only Python
+RUN conda create -n midas-py310 python=3.10.8 -y
 
-# copy inference code
-WORKDIR /opt/MiDaS
-COPY ./midas ./midas
-COPY ./*.py ./
+# Activate the environment and install cudatoolkit first (as it might use a lot of memory)
+RUN conda run -n midas-py310 conda install -y cudatoolkit=11.8.0 && conda clean -a -y
 
-# download model weights so the docker image can be used offline
-RUN cd weights && {curl -OL https://github.com/isl-org/MiDaS/releases/download/v3/dpt_hybrid_384.pt; cd -; }
-RUN python3 run.py --model_type dpt_hybrid; exit 0
+# Install PyTorch and torchvision in a separate step
+RUN conda run -n midas-py310 conda install -y pytorch=1.13.0 torchvision=0.14.0 && conda clean -a -y
 
-# entrypoint (dont forget to mount input and output directories)
-CMD python3 run.py --model_type dpt_hybrid
+# Install remaining dependencies
+RUN conda run -n midas-py310 conda install -y numpy=1.23.4 && conda clean -a -y
+
+# Install pip packages separately
+RUN conda run -n midas-py310 pip install opencv-python==4.6.0.66 imutils==0.5.4 timm==0.6.12 einops==0.6.0 flask flask-limiter gunicorn && conda clean -a -y
+
+# Clean up to save space
+RUN conda clean -a -y
+# Activate the environment in the container shell
+SHELL ["conda", "run", "-n", "midas-py310", "/bin/bash", "-c"]
+COPY . .
+EXPOSE 443
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:443", "outscript:app"]
