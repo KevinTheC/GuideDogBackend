@@ -1,1 +1,1 @@
-web: gunicorn main:app
+web: gunicorn -w 2 -b 0.0.0.0:443 outscript:app
