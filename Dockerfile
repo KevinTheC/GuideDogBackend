@@ -10,7 +10,6 @@ COPY environment.yaml .
 RUN conda env create -f environment.yaml
 
 # Activate the environment in the container shell
-SHELL ["conda", "run", "-n", "midas-py310", "/bin/bash", "-c"]
 
 # Copy app files
 COPY . .
