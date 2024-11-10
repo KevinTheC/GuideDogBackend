@@ -1,0 +1,6 @@
+build:
+  docker:
+    web: Dockerfile  # Points to the Dockerfile
+
+run:
+  web: gunicorn -w 2 -b 0.0.0.0:443 outscript:app
